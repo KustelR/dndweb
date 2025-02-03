@@ -1,7 +1,8 @@
+import { Rect } from "@/geometry";
 import React, { useState } from "react";
 
 type MapItemProps = {
-  pos: { x: number; y: number; width: number; height: number };
+  pos: Rect;
 };
 
 export default function MapItem(props: MapItemProps) {
