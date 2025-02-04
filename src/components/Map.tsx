@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, Ref } from "react";
 import MapItem from "./MapItem";
 import { Rect, Vec2 } from "@/geometry";
-import { renderItem, findPointed, getRelativeClickPos } from "@/scripts/map";
+import { renderItem, findPointed } from "@/scripts/map";
 export default function Map(props: MapProps) {
   const { data, setData } = props;
   const { items, offset } = data;
@@ -20,6 +20,20 @@ export default function Map(props: MapProps) {
     setData(Object.assign({}, props.data, { offset: offset }));
   }
   useEffect(() => {
+    switch (button) {
+      case 0:
+        const bounds = getMapBounds();
+
+        handleElementDrag(
+          clickPos.subtract(bounds),
+          offset,
+          items,
+          setMovingElements,
+        );
+        break;
+    }
+  }, [button]);
+  function getMapBounds(): Vec2 {
     if (mapRoot.current) {
       const clRect = mapRoot.current.getBoundingClientRect();
       setBounds(new Vec2(clRect.x, clRect.y));
@@ -76,33 +90,14 @@ function getAbsolutePosition(pos: Vec2, offset: Vec2): Vec2 {
   return pos.add(offset);
 }
 
-function onMouseDown(
-  event: React.MouseEvent,
-  bounds: Vec2,
-  offset: Vec2,
-  data: Array<MapItem>,
-  setMovingElements: (ids: Array<string>) => void,
-): void {
-  const pressed = event.button;
-
-  switch (pressed) {
-    case 0: // left mouse button
-      handleElementDrag(event, bounds, offset, data, setMovingElements);
-      break;
-    default:
-      break;
-  }
-}
-
 function handleElementDrag(
-  event: React.MouseEvent,
-  bounds: Vec2,
+  clickPos: Vec2,
   offset: Vec2,
   data: Array<MapItem>,
   setMovingElements: (ids: Array<string>) => void,
 ) {
   const pointed = findPointed(
-    getRelativeClickPos(event, bounds),
+    clickPos,
     data.map(
       (item) =>
         new Rect(
