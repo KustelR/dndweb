@@ -11,7 +11,7 @@ export default function Map(props: MapProps) {
   const mapRoot = useRef<HTMLDivElement | null>(null);
   const [button, setButton] = useState(-1);
   const [lastMove, setLastMove] = useState(new Vec2(0, 0));
-  const [bounds, setBounds] = useState(new Vec2(0, 0));
+  const [clickPos, setClickPos] = useState(new Vec2(0, 0));
 
   function setItems(items: Array<MapItem>) {
     setData(Object.assign({}, props.data, { items: items }));
@@ -36,11 +36,18 @@ export default function Map(props: MapProps) {
   function getMapBounds(): Vec2 {
     if (mapRoot.current) {
       const clRect = mapRoot.current.getBoundingClientRect();
-      setBounds(new Vec2(clRect.x, clRect.y));
+      return new Vec2(clRect.x, clRect.y);
     }
-  }, [mapRoot]);
+    return new Vec2(0, 0);
+  }
   useEffect(() => {
     switch (button) {
+      case 0:
+        movingElements.forEach((el) => {
+          moveItem(el, lastMove, items, setItems);
+        });
+
+        break;
       case 1:
         setOffset(offset.add(lastMove));
         break;
@@ -58,7 +65,7 @@ export default function Map(props: MapProps) {
         onMouseDown={(e) => {
           if (mapRoot.current) {
             setButton(e.button);
-            onMouseDown(e, bounds, offset, items, setMovingElements);
+            setClickPos(new Vec2(e.clientX, e.clientY));
           }
         }}
         onMouseUp={(e) => {
@@ -67,11 +74,11 @@ export default function Map(props: MapProps) {
         }}
         onMouseMove={(e) => {
           setLastMove(new Vec2(e.movementX, e.movementY));
-          onMouseMove(e, movingElements, items, setItems);
         }}
         ref={mapRoot}
       >
         {items.map((item) => {
+          const bounds = getMapBounds();
           const { isVisible, pos } = renderItem(item.pos, offset, bounds);
           return isVisible ? (
             <div key={item.id}>
@@ -118,7 +125,6 @@ function handleElementDrag(
       })
       .filter((el) => el !== undefined),
   );
-  //console.log(getRelativeClickPos(event, bounds), data[0].pos);
 }
 
 function onMouseUp(
@@ -126,17 +132,6 @@ function onMouseUp(
   setMovingElements: (ids: Array<string>) => void,
 ) {
   setMovingElements([]);
-}
-
-function onMouseMove(
-  event: React.MouseEvent,
-  movingElements: Array<string>,
-  items: Array<MapItem>,
-  setItems: (items: Array<MapItem>) => void,
-) {
-  movingElements.forEach((el) => {
-    moveItem(el, { x: event.movementX, y: event.movementY }, items, setItems);
-  });
 }
 
 function moveItem(
