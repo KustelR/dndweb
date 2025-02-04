@@ -4,24 +4,21 @@ import React, { useState, useEffect, useRef, Ref } from "react";
 import MapItem from "./MapItem";
 import { Rect, Vec2 } from "@/geometry";
 import { renderItem, findPointed, getRelativeClickPos } from "@/scripts/map";
-
-type MapItem = {
-  pos: Rect;
-  id: string;
-};
-
 export default function Map(props: MapProps) {
-  const { data, defaultOffset } = props;
+  const { data, setData } = props;
+  const { items, offset } = data;
 
   const mapRoot = useRef<HTMLDivElement | null>(null);
-  const [items, setItems] = useState(data);
-  const [offset, setOffset] = useState(
-    defaultOffset ? defaultOffset : new Vec2(0, 0),
-  );
   const [button, setButton] = useState(-1);
   const [lastMove, setLastMove] = useState(new Vec2(0, 0));
   const [bounds, setBounds] = useState(new Vec2(0, 0));
 
+  function setItems(items: Array<MapItem>) {
+    setData(Object.assign({}, props.data, { items: items }));
+  }
+  function setOffset(offset: Vec2) {
+    setData(Object.assign({}, props.data, { offset: offset }));
+  }
   useEffect(() => {
     if (mapRoot.current) {
       const clRect = mapRoot.current.getBoundingClientRect();
@@ -37,7 +34,6 @@ export default function Map(props: MapProps) {
         break;
     }
   }, [lastMove]);
-  useEffect(() => {}, [button]);
 
   const moving: Array<string> = [];
   const [movingElements, setMovingElements] = useState(moving);
@@ -59,11 +55,12 @@ export default function Map(props: MapProps) {
           setLastMove(new Vec2(e.movementX, e.movementY));
           onMouseMove(e, movingElements, items, setItems);
         }}
+        ref={mapRoot}
       >
         {items.map((item) => {
           const { isVisible, pos } = renderItem(item.pos, offset, bounds);
           return isVisible ? (
-            <div key={item.id} ref={mapRoot}>
+            <div key={item.id}>
               <MapItem pos={pos}></MapItem>
             </div>
           ) : (
@@ -79,10 +76,6 @@ function getAbsolutePosition(pos: Vec2, offset: Vec2): Vec2 {
   return pos.add(offset);
 }
 
-type MapProps = {
-  data: Array<MapItem>;
-  defaultOffset?: Vec2;
-};
 function onMouseDown(
   event: React.MouseEvent,
   bounds: Vec2,
@@ -123,7 +116,6 @@ function handleElementDrag(
     ),
   );
   if (pointed.length < 0) return;
-
   setMovingElements(
     pointed
       .map((el, idx) => {
@@ -131,6 +123,7 @@ function handleElementDrag(
       })
       .filter((el) => el !== undefined),
   );
+  //console.log(getRelativeClickPos(event, bounds), data[0].pos);
 }
 
 function onMouseUp(
