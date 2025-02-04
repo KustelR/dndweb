@@ -12,6 +12,8 @@ export default function MapControl(props: {
   let nullMapItem: MapItem | undefined;
   const [newMapItem, setNewMapItem] = useState(nullMapItem);
 
+  const [itemPos, setItemPos] = useState(new Rect(0, 0, 0, 0));
+
   function pushItem() {
     if (newMapItem) {
       setMapData(
@@ -21,7 +23,6 @@ export default function MapControl(props: {
       );
     }
   }
-
   return (
     <div>
       <h3>Map Control</h3>
