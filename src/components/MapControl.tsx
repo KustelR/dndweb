@@ -1,5 +1,6 @@
 import { Rect, Vec2 } from "@/geometry";
 import React, { useEffect, useState } from "react";
+import LabeledInput from "./LabeledInput";
 
 export default function MapControl(props: {
   mapData: MapData;
@@ -39,32 +40,41 @@ export default function MapControl(props: {
         </li>
         <li>
           <form
+            action=""
+            className="[&>*]:block "
             onSubmit={(e) => {
               e.preventDefault();
-              setNewMapItem({
-                id: "sdfadfasdf",
-                pos: new Rect(20, 20, 100, 100),
-              });
               pushItem();
-              console.log(newMapItem);
             }}
           >
-            <label htmlFor="itemName">name</label>
-            <input
+            <LabeledInput
+              label="name"
               onChange={(e) => {
-                setNewMapItem(
-                  newMapItem
-                    ? Object.assign({}, newMapItem, { id: e.target.value })
-                    : { id: e.target.value, pos: new Rect(0, 0, 0, 0) },
-                );
+                setNewMapItem({ id: e.target.value, pos: itemPos });
               }}
-              type="text"
               id="itemName"
             />
-
-            <button id="addItem" type="button">
-              ADD
-            </button>
+            <LabeledInput
+              id="width"
+              onChange={(event) => {
+                setItemPos(
+                  Object.assign(itemPos, {
+                    width: Number(event.target.value),
+                  }),
+                );
+              }}
+            />
+            <LabeledInput
+              id="height"
+              onChange={(event) => {
+                setItemPos(
+                  Object.assign(itemPos, {
+                    height: Number(event.target.value),
+                  }),
+                );
+              }}
+            />
+            <input id="addItem" className="bg-white" type="submit" />
           </form>
         </li>
       </ul>
