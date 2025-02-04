@@ -9,7 +9,7 @@ export default function renderItem(
   boundaries: Vec2,
 ): { isVisible: boolean; pos: Rect } {
   let isVisible: boolean = false;
-  const newPos = new Rect(
+  const offsettedPos = new Rect(
     pos.x + offset.x,
     pos.y + offset.y,
     pos.width,
@@ -17,12 +17,12 @@ export default function renderItem(
   );
 
   if (
-    newPos.x + pos.width > offset.x ||
-    newPos.x < boundaries.add(offset).x ||
-    newPos.y + pos.height > offset.y ||
-    newPos.y < boundaries.add(offset).y
+    offsettedPos.x + pos.width > offset.x ||
+    offsettedPos.x < boundaries.add(offset).x ||
+    offsettedPos.y + pos.height > offset.y ||
+    offsettedPos.y < boundaries.add(offset).y
   ) {
     isVisible = true;
   }
-  return { isVisible, pos: newPos };
+  return { isVisible, pos: offsettedPos };
 }
