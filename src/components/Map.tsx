@@ -82,7 +82,7 @@ export default function Map(props: MapProps) {
           const { isVisible, pos } = renderItem(item.pos, offset, bounds);
           return isVisible ? (
             <div key={item.id}>
-              <MapItem pos={pos}></MapItem>
+              <MapItem pos={pos} fill={item.fill}></MapItem>
             </div>
           ) : (
             ""
@@ -143,15 +143,13 @@ function moveItem(
   setter(
     data.map((el) => {
       if (el.id === id) {
-        return {
-          pos: new Rect(
-            el.pos.x + moveVec.x,
-            el.pos.y + moveVec.y,
-            el.pos.width,
-            el.pos.height,
-          ),
-          id: el.id,
-        };
+        const newPos = new Rect(
+          el.pos.x + moveVec.x,
+          el.pos.y + moveVec.y,
+          el.pos.width,
+          el.pos.height,
+        );
+        return Object.assign({}, el, { pos: newPos });
       } else {
         return el;
       }

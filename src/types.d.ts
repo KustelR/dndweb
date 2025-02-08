@@ -9,7 +9,13 @@ declare global {
   };
   type MapItem = {
     pos: Rect;
+    z?: number;
     id: string;
+    fill: ItemBackground;
   };
+  type ItemBackground = {
+    src?: string;
+    color?: string;
+  }
 }
 export {};

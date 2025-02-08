@@ -1,6 +1,7 @@
 import { Rect, Vec2 } from "@/geometry";
 import React, { useEffect, useState } from "react";
 import LabeledInput from "./ui/LabeledInput";
+import ImageInput from "./ui/ImageInput";
 
 export default function MapControl(props: {
   mapData: MapData;
@@ -9,11 +10,17 @@ export default function MapControl(props: {
   const { setMapData, mapData } = props;
 
   const [mapSrc, setMapSrc] = useState("");
-  let nullMapItem: MapItem | undefined;
-  const [newMapItem, setNewMapItem] = useState(nullMapItem);
-
+  let baseMapItem: MapItem = { pos: new Rect(0, 0, 0, 0), id: "", fill: {} };
+  const [newMapItem, setNewMapItem] = useState(baseMapItem);
   const [itemPos, setItemPos] = useState(new Rect(0, 0, 0, 0));
 
+  function setMapItemFill(fill: ItemBackground) {
+    setNewMapItem(
+      Object.assign({}, newMapItem, {
+        fill: fill,
+      }),
+    );
+  }
   function pushItem() {
     if (newMapItem) {
       setMapData(
@@ -28,6 +35,11 @@ export default function MapControl(props: {
       <h3 className="font-bold bg-white/5 border-b-2 px-1 border-neutral-700">
         map control
       </h3>
+      <ImageInput
+        setImage={(src?: string, color?: string) => {
+          setMapItemFill({src: src, color: color});
+        }}
+      />
       <ul className="px-1">
         <li>
           <form>
@@ -42,7 +54,6 @@ export default function MapControl(props: {
         </li>
         <li>
           <form
-            action=""
             className="flex flex-col space-y-1"
             onSubmit={(e) => {
               e.preventDefault();
@@ -55,7 +66,7 @@ export default function MapControl(props: {
                 setNewMapItem({
                   id: e.target.value,
                   pos: itemPos,
-                  fill: newMapItem ? newMapItem.fill : undefined,
+                  fill: newMapItem.fill,
                 });
               }}
               id="itemName"
@@ -84,16 +95,6 @@ export default function MapControl(props: {
                 }}
               />
             </div>
-            <LabeledInput
-              id="background"
-              onChange={(event) => {
-                setNewMapItem(
-                  Object.assign({}, newMapItem, {
-                    fill: event.target.value,
-                  }),
-                );
-              }}
-            />
             <input
               id="addItem"
               className="bg-neutral-300 text-black"
