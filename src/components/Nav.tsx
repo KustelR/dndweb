@@ -12,7 +12,8 @@ export default function Nav(props: NavProps) {
   return (
     <div className={`w-fit h-full z-50 ${hidden ? "absolute" : "relative"}`}>
       <button
-        className={`${hidden ? "" : "absolute"} right-0 w-10 h-full hover:bg-white/5`}
+        name="hide nav"
+        className={`${hidden ? "" : "absolute"} right-0 w-10 h-full hover:bg-white/5 focus:bg-white/5 focus:outline-none`}
         onClick={() => {
           setHidden(!hidden);
         }}
