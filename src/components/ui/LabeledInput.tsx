@@ -7,16 +7,26 @@ type LabeledInputProps = {
   labelClass?: string;
   inputClass?: string;
   containerClass?: string;
+  dataTestId?: string;
 };
 
 export default function LabeledInput(props: LabeledInputProps) {
-  const { onChange, label, id, labelClass, inputClass, containerClass } = props;
+  const {
+    onChange,
+    label,
+    id,
+    labelClass,
+    inputClass,
+    containerClass,
+    dataTestId,
+  } = props;
   return (
     <div className={containerClass ? containerClass : "block m-0 p-0"}>
       <label className={labelClass ? labelClass : ""} htmlFor={id}>
         {label ? label : id}
       </label>
       <input
+        data-testid={dataTestId}
         className={
           inputClass
             ? inputClass
