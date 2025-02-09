@@ -9,7 +9,7 @@ type MapItemProps = {
 export default function MapItem(props: MapItemProps) {
   const { pos, fill } = props;
   if (!fill) {
-    return ""
+    return "";
   }
   return (
     <div
@@ -19,7 +19,7 @@ export default function MapItem(props: MapItemProps) {
         width: pos.width,
         height: pos.height,
         backgroundImage: fill.src ? `url(${fill.src})` : undefined,
-        backgroundColor: fill.color
+        backgroundColor: fill.color,
       }}
       className={`absolute`}
     ></div>
