@@ -1,45 +1,34 @@
 import React, { useState, useEffect } from "react";
 import LabeledInput from "./LabeledInput";
-import axios from "axios";
-
-async function loadFile(
-  inputType: string,
-  src: string,
-  color: string,
-  file: File | undefined,
-  setImage: (src?: string, color?: string) => void,
-) {
-  switch (inputType) {
-    case "file":
-      if (!file) return;
-      const response = await axios.post("/api/images/post", file, {
-        headers: { "Content-Type": "image/jpeg" },
-      });
-      setImage(`/api/images/static/${response.data}`);
-      break;
-    case "src":
-      setImage(src);
-      break;
-    case "color":
-      setImage(undefined, color);
-      break;
-    default:
-      break;
-  }
-}
 
 export default function ImageInput(props: {
+  loadFile: (file: File | undefined) => Promise<string | void>;
   setImage: (src?: string, color?: string) => void;
 }) {
-  const { setImage } = props;
+  const { setImage, loadFile } = props;
   const [inputType, setInputType] = useState("file");
   const [src, setSrc] = useState("");
   const [color, setColor] = useState("");
-  let defaultReader: ReadableStreamDefaultReader<Uint8Array> | undefined;
   let defaultFile: File | undefined;
   const [file, setFile] = useState(defaultFile);
   useEffect(() => {
-    loadFile(inputType, src, color, file, setImage);
+    const getFile = async () => {
+      const fileName = await loadFile(file);
+      if (fileName) {
+        setImage(fileName);
+      }
+    };
+    switch (inputType) {
+      case "file":
+        getFile();
+        break;
+      case "src":
+        setImage(src);
+        break;
+      case "color":
+        setImage(undefined, color);
+        break;
+    }
   }, [file, src, color]);
   return (
     <div>

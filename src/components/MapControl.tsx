@@ -2,6 +2,7 @@ import { Rect, Vec2 } from "@/geometry";
 import React, { useEffect, useState } from "react";
 import LabeledInput from "./ui/LabeledInput";
 import ImageInput from "./ui/ImageInput";
+import axios from "axios";
 
 export default function MapControl(props: {
   mapData: MapData;
@@ -36,8 +37,13 @@ export default function MapControl(props: {
         map control
       </h3>
       <ImageInput
+        loadFile={(file) => {
+          if (file) {
+            return loadFile(file);
+          } else return new Promise((resolve) => resolve());
+        }}
         setImage={(src?: string, color?: string) => {
-          setMapItemFill({src: src, color: color});
+          setMapItemFill({ src: src, color: color });
         }}
       />
       <ul className="px-1">
@@ -105,4 +111,10 @@ export default function MapControl(props: {
       </ul>
     </div>
   );
+}
+async function loadFile(file: File) {
+  const response = await axios.post("/api/images/post", file, {
+    headers: { "Content-Type": "image/jpeg" },
+  });
+  return `/api/images/static/${response.data}`;
 }
