@@ -39,10 +39,17 @@ export default function ImageInput(props: {
         }}
         name="inputType"
         id="inputType"
+        data-testid="inputTypeSelect"
       >
-        <option value="file">file</option>
-        <option value="src">link</option>
-        <option value="color">color</option>
+        <option data-testid="fileOption" value="file">
+          file
+        </option>
+        <option data-testid="srcOption" value="src">
+          link
+        </option>
+        <option data-testid="colorOption" value="color">
+          color
+        </option>
       </select>
       {inputType === "file" ? <FileInput setFile={setFile} /> : ""}
       {inputType === "src" ? <TextInput setSrc={setSrc} /> : ""}
@@ -66,6 +73,7 @@ function FileInput(props: { setFile: (arg0: File) => void }) {
         id="image"
         name="image"
         accept="image/*"
+        data-testid="fileInput"
       />
     </>
   );
@@ -75,6 +83,7 @@ function TextInput(props: { setSrc: (arg0: string) => void }) {
   return (
     <>
       <LabeledInput
+        dataTestId="srcInput"
         id="textInput"
         onChange={(event) => {
           setSrc(event.target.value);
@@ -89,6 +98,7 @@ function ColorInput(props: { setColor: (arg: string) => void }) {
     <>
       <label htmlFor="image">Image:</label>
       <input
+        data-testid="colorInput"
         onChange={(e) => {
           setColor(e.target.value);
         }}
